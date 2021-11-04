@@ -89,9 +89,207 @@
       <my-component :style="[styleObject, styleObject2]"></my-component>
     </div>
 
+    <br />
+    <div id="date1104"><b>-- 2021/11/04 --</b></div>
+    <br />
+
+    <div id="iftest">
+      <template v-if="viftest > 0.7">
+        <p>v-if-test0: {{viftest}}</p>
+      </template>
+      <template v-else-if="0.3 > viftest">
+        <p>v-if-test1: {{viftest}}</p>
+      </template>
+      <template v-else>
+        <p>v-if-test-else: {{viftest}}</p>
+      </template>
+
+      <template v-if="loginType === 'username'">
+        <label>Username</label>
+        <input placeholder="Enter your username" key="username-input" />
+      </template>
+      <template v-else>
+        <label>Email</label>
+        <input placeholder="Enter your email address" key="email-input" />
+      </template>
+
+      <div v-show="loginType === 'username'">
+        <label>Username</label>
+        <input placeholder="Enter your username" key="username-input" />
+      </div>
+      <div v-show="loginType === 'email'">
+        <label>Email</label>
+        <input placeholder="Enter your email address" key="email-input" />
+      </div>
+
+      <br />
+      <button v-on:click="switchLoginType">Switch</button>
+    </div>
+
+    <ul id="v-for-ex">
+      <li v-for="item in items" :key="item.msg">
+        {{item.msg}}
+      </li>
+      <li v-for="(item, index) in items">
+        {{parentMsg}} - {{index}} - {{item.msg}}
+      </li>
+      <li v-for="value in object">
+        {{value}}
+      </li>
+      <li v-for="(value, name, index) in object">
+        {{index}} - {{name}} - {{value}}
+      </li>
+      <li v-for="n in evenNumbers">{{ n }}</li>
+      <ul v-for="set in sets">
+        <li v-for="n in odd(set)">{{n}}</li>
+      </ul>
+      <span v-for="n in 10">{{ n }} </span>
+      <template v-for="item in items">
+        <li>{{ item.msg }}</li>
+        <li>{{ item.msg }} AAA</li>
+      </template>
+      <li v-for="number in numbers" v-if="number % 2 === 0">{{number}}</li>
+      <ul v-if="numbers.length">
+        <li v-for="number in numbers">
+          {{number}}
+        </li>
+      </ul>
+      <p v-else>No numbers left</p>
+
+      <my-component v-for="item in items" :key="item.value"></my-component>
+    </ul>
+
+    <div id="todo-list-example">
+      <form v-on:submit.prevent="addNewTodo">
+        <label for="new-todo"> Add A Todo</label>
+        <input
+          v-model="newTodoText"
+          id="new-todo"
+          placeholder="input todo here"
+        />
+        <button>Add</button>
+      </form>
+      <ul>
+        <li
+          is="todo-itemN"
+          v-for="(todo, index) in todos"
+          v-bind:key="todo.id"
+          v-bind:title="todo.title"
+          v-on:remove="todos.splice(index, 1)"
+        ></li>
+      </ul>
+    </div>
+
+    <div id="event-example">
+      <button v-on:click="counter += 1">Add1</button>
+      <p>clicked {{counter}} times</p>
+      <br />
+      <button v-on:click="greet">GREET</button>
+      <br />
+      <button v-on:click="say('hello')">say hello</button>
+      <button v-on:click="say('what')">say what</button>
+      <br />
+      <button v-on:click="warn('WRNING', $event)">Submit</button>
+      <br />
+      <input id="inputwarn" v-on:keyup.enter="warn('enter', $event)" />
+    </div>
+
+    <!-- Form -->
+    <br />
+    <br />
+    <b>form</b>
+    <div id="test-form-div">
+      <input v-model="msg" placeholder="edit me" />
+      <p>message: {{ msg }}</p>
+
+      <textarea v-model="textareaModel" placeholder="textarea"></textarea>
+      <p style="white-space: pre-line;">
+        begin
+        <br />{{textareaModel}} <br />end
+      </p>
+
+      <input type="checkbox" id="chb" v-model="checked" />
+      <label for="chb"> {{ checked }} </label>
+      <br />
+
+      <input type="checkbox" id="jack" value="Jack" v-model="checkedNames" />
+      <label for="jack">Jack</label>
+      <input type="checkbox" id="john" value="John" v-model="checkedNames" />
+      <label for="john">John</label>
+      <input type="checkbox" id="mike" value="Mike" v-model="checkedNames" />
+      <label for="mike">Mike</label>
+      <br />
+      <span>Checked: {{checkedNames}}</span>
+      <br />
+      <br />
+
+      <input type="radio" id="one" value="One" v-model="picked" />
+      <label for="one">One</label>
+      <input type="radio" id="two" value="Two" v-model="picked" />
+      <label for="two">Two</label>
+      <br />
+      <span> picked: {{ picked }} </span>
+      <br />
+      <br />
+
+      <select v-model="selected">
+        <option disabled value=""> Pls Select </option>
+        <option>A</option>
+        <option>B</option>
+        <option>C</option>
+      </select>
+      <span> selected: {{ selected }} </span>
+      <br />
+      <br />
+
+      <select v-model="selectMulti" multiple>
+        <option>A</option>
+        <option>B</option>
+        <option>C</option>
+      </select>
+      <span> selected: {{ selectMulti }} </span>
+      <br />
+      <br />
+
+      <select v-model="selectFor">
+        <option v-for="option in options" :value="option.value">
+          {{ option.text }}
+        </option>
+      </select>
+      <span> selected: {{ selectFor }} </span>
+      <br />
+      <br />
+
+      <input
+        type="checkbox"
+        v-model="toggle"
+        true-value="yes"
+        false-value="no"
+      />
+      <span>{{ toggle }}</span>
+      <br />
+      <br />
+
+      <input v-model.lazy="msg2" placeholder="edit me" />
+      <p>message: {{ msg2 }}</p>
+      <br />
+      <br />
+
+      <input v-model.number="msg3" type="number" />
+      <p>message: {{ msg3 }}</p>
+      <br />
+      <br />
+
+      <input v-model.trim="msg4" />
+      <p>message: "{{ msg4 }}"</p>
+      <br />
+      <br />
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
     <script>
+      //#region "20211101"
       var app = new Vue({
         el: "#app",
         data: {
@@ -152,7 +350,9 @@
           ]
         }
       });
+      //#endregion
 
+      //#region "20211102"
       //<!-- 2021/11/02 -->
       var app8 = new Vue({
         el: "#app-8",
@@ -267,6 +467,155 @@
           }
         }
       });
+      //#endregion
+
+      //#region "20211104"
+      // -- 2021/11/04 --
+      //#region "v-if"
+      var viftestvm = new Vue({
+        el: "#iftest",
+        data: {
+          loginType: "username"
+        },
+        computed: {
+          viftest: function () {
+            return Math.random();
+          }
+        },
+        methods: {
+          switchLoginType: function () {
+            if (this.loginType === "username") {
+              this.loginType = "email";
+            } else {
+              this.loginType = "username";
+            }
+          }
+        }
+      });
+      //#endregion
+      //#region "for and list"
+      var vForVm = new Vue({
+        el: "#v-for-ex",
+        data: {
+          parentMsg: "Parent",
+          items: [{ msg: "foo" }, { msg: "bar" }],
+          object: {
+            title: "How To List",
+            author: "Jane Doe",
+            publishedAt: "2021/01/01"
+          },
+          numbers: [1, 2, 3, 4, 5],
+          sets: [
+            [1, 2, 3, 4, 5],
+            [6, 7, 8, 9, 10]
+          ]
+        },
+        computed: {
+          evenNumbers: function () {
+            return this.numbers.filter(function (number) {
+              return number % 2 === 0;
+            });
+          }
+        },
+        methods: {
+          odd: function (sets) {
+            return sets.filter(function (set) {
+              return set % 2 === 1;
+            });
+          }
+        }
+      });
+
+      Vue.component("todo-itemN", {
+        template:
+          "\
+          <li>\
+            {{title}}\
+            <button v-on:click=\"$emit('remove')\">Remove</button>\
+          </li>",
+        props: ["title"]
+      });
+      var todoVm = new Vue({
+        el: "#todo-list-example",
+        data: {
+          newTodoText: "",
+          todos: [
+            {
+              id: 1,
+              title: "cook dinner"
+            },
+            {
+              id: 2,
+              title: "wash shirts"
+            }
+          ],
+          nextTodoId: 3
+        },
+        methods: {
+          addNewTodo: function () {
+            this.todos.push({
+              id: this.nextTodoId++,
+              title: this.newTodoText
+            });
+            this.newTodoText = "";
+          }
+        }
+      });
+      //#endregion
+      //#region "event"
+      var eventVm = new Vue({
+        el: "#event-example",
+        data: {
+          counter: 0,
+          name: "Vue.js"
+        },
+        methods: {
+          greet: function (event) {
+            alert("Hello " + this.name + "!");
+            if (event) {
+              alert(event.target.tagName);
+            }
+          },
+          say: function (msg) {
+            alert(msg);
+          },
+          warn: function (msg, event) {
+            if (event) {
+              event.preventDefault();
+            }
+            if (msg === "enter") {
+              msg = document.getElementById(event.target.id).value;
+            }
+            alert(msg);
+          }
+        }
+      });
+      //#endregion
+      //#region "Form"
+      var formVm = new Vue({
+        el: "#test-form-div",
+        data: {
+          msg: "",
+          textareaModel: "",
+          checked: true,
+          checkedNames: [],
+          picked: "One",
+          selected: "",
+          selectMulti: [],
+          options: [
+            { text: "One", value: "A" },
+            { text: "Two", value: "B" },
+            { text: "Two2", value: "B2" },
+            { text: "Three", value: "C" }
+          ],
+          selectFor: "A",
+          toggle: "",
+          msg2: "",
+          msg3: ""
+        }
+      });
+      //#endregion
+      // #endregion
     </script>
     <style>
       .active {

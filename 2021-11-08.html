@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My first Vue app</title>
+    <script src="https://unpkg.com/vue"></script>
+  </head>
+  <body>
+    <h1>-- 2021/11/08 --</h1>
+    <h2>Component Basis</h2>
+    <div id="component-demo">
+      <button-counter></button-counter>
+      <button-counter></button-counter>
+      <button-counter></button-counter>
+      <br />
+      <blog-post title="Blog Title1"></blog-post>
+      <blog-post title="Blog Post Test"></blog-post>
+      <br />
+      <blog-post
+        v-for="post in posts"
+        :key="post.id"
+        :title="post.title"
+      ></blog-post>
+      <br />
+      <blog-post2
+        v-for="post in posts"
+        :key="post.id + 'A'"
+        :post="post"
+      ></blog-post2>
+      <div :style="{ fontSize: postFontSize + 'em' }">
+        <blog-post3
+          v-for="post in posts"
+          :key="post.id + 'B'"
+          :post="post"
+          v-on:enlarge-text="postFontSize += 0.1"
+        ></blog-post3>
+      </div>
+      <div :style="{ fontSize: postFontSize + 'em' }">
+        <blog-post4
+          v-for="post in posts"
+          :key="post.id + 'C'"
+          :post="post"
+          v-on:enlarge-text="onEnlargeText"
+        ></blog-post4>
+      </div>
+
+      <custom-input
+        v-bind:value="searchText"
+        v-on:input="searchText = $event"
+      ></custom-input>
+      <br />
+      <custom-input v-model="searchText"></custom-input>
+      <br />
+      <br />
+      <alert-box>TEST</alert-box>
+    </div>
+
+    <h2>Component Detail</h2>
+    <div id="component-detail">
+      <my-component prop-num="111" propStrReq="req"></my-component>
+      <br /><br />
+      <base-input
+        label="UserName:"
+        v-model="username"
+        required
+        placeholder="Enter your Username"
+      >
+      </base-input>
+      <br /><br />
+      <base-checkbox v-model="lovingVue"></base-checkbox>
+      <br /><br />
+
+      <navigation-link url="practice.html">TEST-LINK</navigation-link>
+      <br />
+      <navigation-link url="practice.html"></navigation-link>
+      <navigation-link url="practice.html">
+        <alert-box>ALERT</alert-box>
+      </navigation-link>
+      <br />
+
+      <base-layout>
+        <template v-slot:header>
+          <h3>H3Header</h3>
+        </template>
+        <template v-slot:main>
+          <p>main contents</p>
+        </template>
+      </base-layout>
+      <br />
+
+      <!-- <current-user>
+        <template v-slot:default="slotProps">
+          {{ slotProps.user.firstName }}
+        </template></current-user
+      > -->
+    </div>
+
+    <script>
+      //#region "Component Basis"
+      Vue.component("button-counter", {
+        data: function () {
+          return {
+            count: 0
+          };
+        },
+        template:
+          '<button v-on:click="count++">Clicked {{count}} times</button>'
+      });
+      Vue.component("blog-post", {
+        props: ["title"],
+        template: "<h3>{{title}}</h3>"
+      });
+      Vue.component("blog-post2", {
+        props: ["post"],
+        template:
+          "\
+          <div class='blog-post'>\
+            <h3>{{ post.title }}2</h3>\
+            <div v-html='post.content'></div>\
+          </div>"
+      });
+      Vue.component("blog-post3", {
+        props: ["post"],
+        template:
+          "\
+          <div class='blog-post'>\
+            <h3>{{ post.title }}3</h3>\
+            <button v-on:click='$emit(\"enlarge-text\")'>Enlarge text</button>\
+            <div v-html='post.content'></div>\
+          </div>"
+      });
+      Vue.component("blog-post4", {
+        props: ["post"],
+        template:
+          "\
+          <div class='blog-post'>\
+            <h3>{{ post.title }}4</h3>\
+            <button v-on:click='$emit(\"enlarge-text\", 0.2)'>Enlarge text</button>\
+            <div v-html='post.content'></div>\
+          </div>"
+      });
+      Vue.component("custom-input", {
+        props: ["value"],
+        template: `
+          <input
+            v-bind:value="value"
+            v-on:input="$emit('input', $event.target.value)"
+          >`
+      });
+      Vue.component("alert-box", {
+        template: `
+          <div class="demo-alert-box">
+            <strong>Error!</strong>
+            <slot></slot>
+          </div>
+        `
+      });
+
+      var ComponentVm = new Vue({
+        el: "#component-demo",
+        data: {
+          posts: [
+            { id: 1, title: "My Journey", content: "this is a content." },
+            { id: 2, title: "My Profile", content: "My name is Content." },
+            {
+              id: 3,
+              title: "My Hobby",
+              content: "My Hobby is Content.<br> it is fun."
+            }
+          ],
+          postFontSize: 1
+        },
+        methods: {
+          onEnlargeText: function (enlaegeAmount) {
+            this.postFontSize += enlaegeAmount;
+          }
+        }
+      });
+      // #endregion
+
+      // #region "Component Detail"
+      // var ComponentA = {
+      //   props: ["test"],
+      //   template: "<div style='font-color:red'>{{test}}</div>"
+      // };
+      // var ComponentB = {
+      //   components: {
+      //     "component-a": ComponentA
+      //   },
+      //   template: "<component-a><b></b></component-a>"
+      // };
+      var MyComponent = {
+        // Vue.component("my-component", {
+        props: {
+          propNum: Number,
+          propStrNum: [String, Number],
+          propStrReq: {
+            type: String,
+            required: true
+          },
+          propNumDef: {
+            type: Number,
+            default: 200
+          },
+          propObjDef: {
+            type: Object,
+            default: function () {
+              return { message: "hello" };
+            }
+          },
+          propCase: {
+            validator: function (value) {
+              return ["success", "danger", "warning"].indexOf(value) !== -1;
+            }
+          }
+        },
+        template: "<input :value='propNum'>"
+      };
+      Vue.component("base-input", {
+        inheritAttrs: false,
+        props: ["label", "value"],
+        computed: {
+          inputListeners: function () {
+            var vm = this;
+            return Object.assign({}, this.$listeners, {
+              input: function (event) {
+                vm.$emit("input", event.target.value);
+              }
+            });
+          }
+        },
+        template: `
+          <label>
+            {{ label }}
+            <input
+              v-bind="$attrs"
+              v-bind:value="value"
+              v-on="inputListeners"
+            >
+            </label>
+        `
+      });
+      // v-on:input="$emit('input', $event.taget.value)"
+      Vue.component("base-checkbox", {
+        model: {
+          props: "checked",
+          event: "change"
+        },
+        props: {
+          checked: Boolean
+        },
+        template: `
+          <input
+            type="checkbox"
+            v-bind:checked="checked"
+            v-on:change="$emit('change', $event.target.checked)"
+          >
+        `
+      });
+      Vue.component("navigation-link", {
+        props: {
+          url: String
+        },
+        template: `
+          <a :href='url' class='nav-link'>
+            <slot>SLOT IS EMPTY</slot>
+          </a>
+          `
+      });
+      Vue.component("base-layout", {
+        props: {
+          url: String
+        },
+        template: `
+          <div>
+            <header>
+              <slot name="header"></slot>
+            </header>
+            <main>
+              <slot name="main"></slot>
+            </main>
+          </div>
+          `
+      });
+      // Vue.component("current-user", {
+      //   // props: {
+      //   //   user: {
+      //   //     firstName: "taro",
+      //   //     lastName: "tanaka"
+      //   //   }
+      //   // },
+      //   data: {
+      //     user: {
+      //       firstName: "taro",
+      //       lastName: "tanaka"
+      //     }
+      //   },
+      //   template: `
+      //     <span>
+      //       <slot v-bind:user="user">{{user.firstName}}</slot>
+      //     </span>
+      //     `
+      // });
+
+      var ComponentDetailVm = new Vue({
+        el: "#component-detail",
+        components: {
+          "my-component": MyComponent
+        }
+      });
+      // #endregion
+    </script>
+    <style>
+      .demo-alert-box {
+        background-color: orange;
+        border: orangered;
+        border-style: solid;
+      }
+    </style>
+  </body>
+</html>

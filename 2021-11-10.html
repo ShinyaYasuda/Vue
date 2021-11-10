@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My first Vue app</title>
+    <script src="https://unpkg.com/vue"></script>
+  </head>
+  <body>
+    <h1>-- 2021/11/10 --</h1>
+    <h2>Handling Edge Cases</h2>
+    <div id="app">
+      {{message}}
+      <br />
+      {{test}}
+      <input ref="inputref" value="1234" />
+      <button v-on:click="change">button</button>
+      <br />
+      <test-component><inject-component></inject-component></test-component>
+    </div>
+
+    <script>
+      var rootVm = new Vue({
+        data: {
+          foo: 1
+        }
+      });
+      var parentVm = new Vue({
+        parent: rootVm,
+        data: {
+          bar: 2
+        }
+      });
+      Vue.component("test-component", {
+        provide: function () {
+          return {
+            addOne: this.addOne
+          };
+        },
+        data: function () {
+          return {
+            num: 5
+          };
+        },
+        methods: {
+          addOne: function () {
+            this.num += 1;
+            return this.num;
+          }
+        },
+        template: `<div><slot></slot></div>`
+      });
+      Vue.component("inject-component", {
+        inject: ["addOne"],
+        data: function () {
+          return {
+            num: 0
+          };
+        },
+        methods: {
+          getNum: function () {
+            this.num = this.addOne();
+          }
+        },
+        template: `<button v-on:click="getNum">BUTTON{{num}}</button>`
+      });
+
+      var app = new Vue({
+        parent: parentVm,
+        el: "#app",
+        data: {
+          foo: 0,
+          test: ""
+        },
+        computed: {
+          message: function () {
+            return (
+              "parent:" +
+              this.$parent.bar.toString() +
+              ", root:" +
+              this.$root.foo.toString() +
+              ", this:" +
+              this.foo.toString()
+            );
+          }
+        },
+        methods: {
+          change: function () {
+            this.foo = this.$refs.inputref.value;
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

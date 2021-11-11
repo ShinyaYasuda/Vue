@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>My first Vue app</title>
+    <script src="https://unpkg.com/vue"></script>
+  </head>
+  <body>
+    <h1>-- 2021/11/11 --</h1>
+    <h2>特別な問題に対処する(後半)</h2>
+    <div id="appA">
+      <recursive-component></recursive-component>
+      <x-component></x-component>
+    </div>
+
+    <script type="text/x-template" id="test-template">
+      <p>This is x-template</p>
+    </script>
+
+    <script>
+      var cnt = 0;
+      Vue.component("recursive-component", {
+        data: function () {
+          return {
+            count: (BigInt = 0),
+            nums: [1, 2, 3],
+            max: 9
+          };
+        },
+        methods: {
+          getBol: function (num) {
+            cnt++;
+            return cnt <= this.max;
+          }
+        },
+        template: `
+          <div>
+            <p v-for="num in nums" :key="num" v-if="getBol(num)">
+              <slot>
+                <recursive-component>
+                  {{num}}
+                </recursive-component>
+              </slot>
+            </p>
+          </div>
+        `
+      });
+      Vue.component("x-component", {
+        template: "#test-template"
+      });
+      var appA = new Vue({
+        el: "#appA"
+      });
+    </script>
+  </body>
+</html>

@@ -31,3 +31,8 @@ https://jp.vuejs.org/v2/guide/components-edge-cases.html#%E4%BE%9D%E5%AD%98%E6%8
 
 特別な問題に対処する(プログラム的なイベントリスナー〜最後まで)
 https://jp.vuejs.org/v2/guide/components-edge-cases.html#%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0%E7%9A%84%E3%81%AA%E3%82%A4%E3%83%99%E3%83%B3%E3%83%88%E3%83%AA%E3%82%B9%E3%83%8A%E3%83%BC
+
+# 2021/11/12
+
+トランジションとアニメーション(Enter/Leave とトランジション一覧)
+https://jp.vuejs.org/v2/guide/transitions.html

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>My first Vue app</title>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.2.4/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tween.js@16.3.4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/color-js@1.0.3"></script>
+  </head>
+  <body>
+    <h1>-- 2021/11/15 --</h1>
+    <h2>状態のトランジション</h2>
+    <div id="app">
+      <h3>ウォッチャによる状態のアニメーション</h3>
+      <h4>number</h4>
+      <input v-model.number="number" type="number" step="20" />
+      <p>{{ animatedNumber }}</p>
+      <h4 :style="{ color: tweenedCSSColor }">
+        colour
+      </h4>
+      <input
+        v-model="colorQuery"
+        @keyup.enter="updateColor"
+        placeholder="Enter a Color"
+      />
+      <button @click="updateColor">Update</button>
+      <p>Preview</p>
+      <span
+        :style="{ backgroundColor: tweenedCSSColor }"
+        class="example-7-color-preview"
+      >
+      </span>
+      <p>{{ tweenedCSSColor }}</p>
+      <h3>コンポーネント内のトランジションの整理</h3>
+      <input v-model.number="firstNumber" type="number" step="20" /> +
+      <input v-model.number="secondNumber" type="number" step="20" /> = {{
+      result }}
+      <p>
+        <animated-integer :value="firstNumber"></animated-integer> +
+        <animated-integer :value="secondNumber"></animated-integer> =
+        <animated-integer :value="result"></animated-integer>
+      </p>
+    </div>
+
+    <h2>再利用と構成</h2>
+
+    <h3>ミックスイン</h3>
+    <p>コンソール上で実行...</p>
+
+    <div id="app2">
+      <h3>カスタムディレクティブ</h3>
+      <input v-focus type="text" />
+      <br />
+      <br />
+      <div id="app3" v-demo:foo.a.b="message"></div>
+    </div>
+
+    <script>
+      // #region "状態のトランジション"
+      var Color = net.brehaut.Color;
+
+      Vue.component("animated-integer", {
+        template: "<span>{{ tweeningValue }}</span>",
+        props: {
+          value: {
+            type: Number,
+            required: true
+          }
+        },
+        data: function () {
+          return {
+            tweeningValue: 0
+          };
+        },
+        watch: {
+          value: function (newValue, oldValue) {
+            this.tween(oldValue, newValue);
+          }
+        },
+        mounted: function () {
+          this.tween(0, this.value);
+        },
+        methods: {
+          tween: function (startValue, endValue) {
+            var vm = this;
+            function animate() {
+              if (TWEEN.update()) {
+                requestAnimationFrame(animate);
+              }
+            }
+
+            new TWEEN.Tween({ tweeningValue: startValue })
+              .to({ tweeningValue: endValue }, 500)
+              .onUpdate(function () {
+                vm.tweeningValue = this.tweeningValue.toFixed(0);
+              })
+              .start();
+
+            animate();
+          }
+        }
+      });
+      var app = new Vue({
+        el: "#app",
+        data: {
+          number: 0,
+          tweenedNumber: 0,
+          colorQuery: "",
+          color: {
+            red: 0,
+            green: 0,
+            blue: 0,
+            alpha: 1
+          },
+          tweenedColor: {},
+          firstNumber: 20,
+          secondNumber: 40
+        },
+        created: function () {
+          this.tweenedColor = Object.assign({}, this.color);
+        },
+        computed: {
+          animatedNumber: function () {
+            return this.tweenedNumber.toFixed(0);
+          },
+          tweenedCSSColor: function () {
+            return new Color({
+              red: this.tweenedColor.red,
+              green: this.tweenedColor.green,
+              blue: this.tweenedColor.blue,
+              alpha: this.tweenedColor.alpha
+            }).toCSS();
+          },
+          result: function () {
+            return this.firstNumber + this.secondNumber;
+          }
+        },
+        watch: {
+          number: function (newValue) {
+            gsap.to(this.$data, { duration: 0.8, tweenedNumber: newValue });
+          },
+          color: function () {
+            function animate() {
+              if (TWEEN.update()) {
+                requestAnimationFrame(animate);
+              }
+            }
+
+            new TWEEN.Tween(this.tweenedColor).to(this.color, 750).start();
+
+            animate();
+          }
+        },
+        methods: {
+          updateColor: function () {
+            this.color = new Color(this.colorQuery).toRGB();
+            this.colorQuery = "";
+          }
+        }
+      });
+      // #endregion
+
+      // #region "再利用と構成"
+      // #region "ミックスイン"
+      var myMixIn = {
+        created: function () {
+          this.hello();
+        },
+        methods: {
+          hello: function () {
+            console.log("this is my Mix In");
+          }
+        }
+      };
+
+      var Component = Vue.extend({
+        mixins: [myMixIn]
+      });
+
+      var component = new Component();
+
+      var mixin = {
+        data: function () {
+          return {
+            message: "Hey",
+            foo: "abcdefg"
+          };
+        }
+      };
+
+      new Vue({
+        mixins: [mixin],
+        data: function () {
+          return {
+            message: "BYE",
+            bar: "123456"
+          };
+        },
+        created: function () {
+          console.log(this.$data);
+        }
+      });
+
+      new Vue({
+        mixins: [myMixIn],
+        created: function () {
+          console.log("Component log");
+        }
+      });
+
+      new Vue({
+        mixins: [myMixIn],
+        methods: {
+          hello: function () {
+            console.log("CONFLICTION");
+          }
+        }
+      });
+
+      Vue.mixin({
+        created: function () {
+          var myOption = this.$options.myOption;
+          if (myOption) {
+            console.log(myOption);
+          }
+        }
+      });
+
+      new Vue({
+        myOption: "Global MIxin"
+      });
+      // #endregion
+      // #region "カスタムディレクティブ"
+      Vue.directive("focus", {
+        inserted: function (el) {
+          el.focus();
+        }
+      });
+
+      Vue.directive("demo", {
+        bind: function (el, binding, vnode) {
+          var s = JSON.stringify;
+          el.innerHTML =
+            "name: " +
+            s(binding.name) +
+            "<br>" +
+            "value: " +
+            s(binding.value) +
+            "<br>" +
+            "expression: " +
+            s(binding.expression) +
+            "<br>" +
+            "argument: " +
+            s(binding.arg) +
+            "<br>" +
+            "modifiers: " +
+            s(binding.modifiers) +
+            "<br>" +
+            "vnode keys: " +
+            Object.keys(vnode).join(", ");
+        }
+      });
+
+      var app2 = new Vue({
+        el: "#app2"
+      });
+
+      var app3 = new Vue({
+        el: "#app3",
+        data: {
+          message: "How are you?"
+        }
+      });
+      // #endregion
+
+      // #endregion
+    </script>
+    <style>
+      .example-7-color-preview {
+        display: inline-block;
+        width: 50px;
+        height: 50px;
+      }
+    </style>
+  </body>
+</html>

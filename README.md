@@ -37,10 +37,18 @@ https://jp.vuejs.org/v2/guide/components-edge-cases.html#%E3%83%97%E3%83%AD%E3%8
 トランジションとアニメーション(Enter/Leave とトランジション一覧)
 https://jp.vuejs.org/v2/guide/transitions.html
 
-# 2021/11/13
+# 2021/11/15
 
 トランジションとアニメーション(状態のトランジション)
 https://jp.vuejs.org/v2/guide/transitioning-state.html
 〜
 再利用と構成（カスタムディレクティブーディレクティブフック引数まで）
 https://jp.vuejs.org/v2/guide/custom-directive.html#%E3%83%87%E3%82%A3%E3%83%AC%E3%82%AF%E3%83%86%E3%82%A3%E3%83%96%E3%83%95%E3%83%83%E3%82%AF%E5%BC%95%E6%95%B0
+
+# 2021/11/16
+
+再利用と構成（カスタムディレクティブー動的なディレクティブ引数）
+https://jp.vuejs.org/v2/guide/custom-directive.html#%E5%8B%95%E7%9A%84%E3%81%AA%E3%83%87%E3%82%A3%E3%83%AC%E3%82%AF%E3%83%86%E3%82%A3%E3%83%96%E5%BC%95%E6%95%B0
+〜
+再利用と構成（描画関数と JSX ー素の JavaScript によるテンプレートの書き換え->スロット）
+https://jp.vuejs.org/v2/guide/render-function.html#%E3%82%B9%E3%83%AD%E3%83%83%E3%83%88

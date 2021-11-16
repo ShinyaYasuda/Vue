@@ -40,7 +40,7 @@ https://jp.vuejs.org/v2/guide/transitions.html
 # 2021/11/13
 
 トランジションとアニメーション(状態のトランジション)
-[https://jp.vuejs.org/v2/guide/transitioning-state.html]
+https://jp.vuejs.org/v2/guide/transitioning-state.html
 〜
 再利用と構成（カスタムディレクティブーディレクティブフック引数まで）
-[https://jp.vuejs.org/v2/guide/custom-directive.html#%E3%83%87%E3%82%A3%E3%83%AC%E3%82%AF%E3%83%86%E3%82%A3%E3%83%96%E3%83%95%E3%83%83%E3%82%AF%E5%BC%95%E6%95%B0]
+https://jp.vuejs.org/v2/guide/custom-directive.html#%E3%83%87%E3%82%A3%E3%83%AC%E3%82%AF%E3%83%86%E3%82%A3%E3%83%96%E3%83%95%E3%83%83%E3%82%AF%E5%BC%95%E6%95%B0

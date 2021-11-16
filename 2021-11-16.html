@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>My first Vue app</title>
+    <script src="https://unpkg.com/vue"></script>
+  </head>
+  <body>
+    <h1>-- 2021/11/16 --</h1>
+    <h2>カスタムディレクティブ</h2>
+    <div id="app">
+      <h3>動的なディレクティブ引数</h3>
+      <p>scroll down th page</p>
+      <p v-pin="200">stick me 200px from the top of the page</p>
+      <p v-pin2:[direction]="200">stick me 200px from the left of the page</p>
+      <p v-color-swatch="'pink'">color swacth</p>
+      <p v-demo="{color:'blue', fontSize:'20px'}">fontcolor and fontsize</p>
+    </div>
+    <h2>描画関数とJSX</h2>
+    <div id="app2">
+      <anchor-heading :level="3">test heading 3</anchor-heading>
+      <anchor-heading :level="4">test heading 4</anchor-heading>
+      <anchor-heading :level="5">test heading 5</anchor-heading>
+      <anchor-heading2 :level="3">test heading 3</anchor-heading2>
+      <div>
+        <p>test line1</p>
+        <p>test line2</p>
+      </div>
+      <anchor-heading2 :level="4">test heading 4</anchor-heading2>
+      <div>
+        <p>test line1</p>
+        <p>test line2</p>
+      </div>
+      <anchor-heading2 :level="5">test heading 5</anchor-heading2>
+      <div>
+        <p>test line1</p>
+        <p>test line2</p>
+      </div>
+      <factory></factory>
+      <if-component :items="ar"></if-component>
+      <model-component value="test"></model-component>
+      <scoped-component>scoped</scoped-component>
+      <!-- <scoped-component2></scoped-component2> -->
+    </div>
+
+    <script>
+      // #region "カスタムディレクティブ"
+      Vue.directive("pin", {
+        bind: function (el, binding, vnode) {
+          el.style.position = "fixed";
+          el.style.top = binding.value + "px";
+        }
+      });
+      Vue.directive("pin2", {
+        bind: function (el, binding, vnode) {
+          el.style.position = "fixed";
+          var s = binding.arg == "left" ? "left" : "top";
+          el.style[s] = binding.value + "px";
+        }
+      });
+      Vue.directive("color-swatch", function (el, binding) {
+        el.style.backgroundColor = binding.value;
+      });
+      Vue.directive("demo", function (el, binding) {
+        el.style.color = binding.value.color;
+        el.style.fontSize = binding.value.fontSize;
+      });
+
+      new Vue({
+        el: "#app",
+        data: function () {
+          return {
+            direction: "left"
+          };
+        }
+      });
+      // #endregion
+
+      // #region "描画関数とJSX"
+      Vue.component("anchor-heading", {
+        render: function (createElement) {
+          return createElement("h" + this.level, this.$slots.default);
+        },
+        props: {
+          level: {
+            type: Number,
+            rewuired: true
+          }
+        }
+      });
+
+      var getChildrenTextContent = function (children) {
+        return children
+          .map(function (node) {
+            return node.children
+              ? getChildrenTextContent(node.children)
+              : node.text;
+          })
+          .join("");
+      };
+
+      Vue.component("anchor-heading2", {
+        render: function (createElement) {
+          var headingId = getChildrenTextContent(this.$slots.default)
+            .toLowerCase()
+            .replace(/\W+/g, "-")
+            .replace(/(^-|-$)/g, "");
+
+          return createElement("h" + this.level, [
+            createElement(
+              "a",
+              {
+                attrs: {
+                  name: headingId,
+                  href: "#" + headingId
+                }
+              },
+              this.$slots.default
+            )
+          ]);
+        },
+        props: {
+          level: {
+            type: Number,
+            rewuired: true
+          }
+        }
+      });
+      Vue.component("factory", {
+        render: function (createElement) {
+          return createElement(
+            "div",
+            Array.apply(null, { length: 3 }).map(function () {
+              return createElement("p", "hi");
+            })
+          );
+        }
+      });
+      Vue.component("if-component", {
+        props: ["items"],
+        render: function (createElement) {
+          if (this.items.length) {
+            return createElement(
+              "ul",
+              this.items.map(function (item) {
+                return createElement("li", item.name);
+              })
+            );
+          } else {
+            return createElement("p", "no items found");
+          }
+        }
+      });
+
+      Vue.component("model-component", {
+        props: ["value"],
+        render: function (createElement) {
+          var self = this;
+          return createElement("input", {
+            domProps: { value: self.value },
+            on: {
+              input: function (event) {
+                self.$emit("input", event.target.value);
+              }
+            }
+          });
+        }
+      });
+
+      Vue.component("scoped-component", {
+        props: ["message"],
+        render: function (createElement) {
+          return createElement("div", [
+            this.$scopedSlots.default({
+              text: this.message
+            })
+          ]);
+        }
+      });
+
+      // Vue.component("scoped-component2", {
+      //   props: ["message"],
+      //   data: function () {
+      //     return {
+      //       props: {
+      //         name: "test",
+      //         value: "aaaa",
+      //         text: "bbb"
+      //       }
+      //     };
+      //   },
+      //   render: function (createElement) {
+      //     return createElement("div", [
+      //       createElement("child", {
+      //         scopedSlots: {
+      //           default: function (props) {
+      //             return createElement("span", props.text);
+      //           }
+      //         }
+      //       })
+      //     ]);
+      //   }
+      // });
+
+      new Vue({
+        el: "#app2",
+        data: {
+          ar: [{ name: "aaa" }, { name: "bbb" }, { name: "ccc" }],
+          message: "this is a message"
+        }
+      });
+      // #endregion
+    </script>
+    <style></style>
+  </body>
+</html>

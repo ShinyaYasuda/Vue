@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>My first Vue app</title>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="Hello.js"></script>
+  </head>
+  <body>
+    <h1>-- 2021/11/17 --</h1>
+    <h2>描画関数とJSX</h2>
+    <div id="app">
+      <h3>JSX</h3>
+      <button @click="count++">BUTTON</button>
+      {{count}}
+      <function-component :count="count"></function-component>
+    </div>
+
+    <h2>フィルター</h2>
+    <div id="app2">
+      <input type="text" v-model="invalue" />
+      <p>
+        Capitalize: {{ invalue }} -> {{ invalue | capitalize }}
+        <br />
+        Capitalize(n): {{ invalue }} -> {{ invalue | capitalize | addLength }}
+      </p>
+    </div>
+
+    <script>
+      // #region "描画関数とJSX"
+      Vue.component("function-component", {
+        functional: true,
+        render: function (createElement, context) {
+          var txt = "";
+          if (context.props.count % 2 === 0) {
+            txt = "Even";
+          } else {
+            txt = "Odd";
+          }
+          return createElement("p", txt);
+        }
+      });
+
+      new Vue({
+        el: "#app",
+        data: {
+          count: 0
+        }
+      });
+      // #endregion
+
+      // #region "フィルター"
+      Vue.filter("capitalize", function (value) {
+        if (!value) return "";
+        value = value.toString();
+        return value.charAt(0).toUpperCase() + value.slice(1);
+      });
+
+      Vue.filter("addLength", function (value) {
+        if (!value) return "";
+        value = value.toString();
+        return value + "(" + value.length + ")";
+      });
+
+      new Vue({
+        el: "#app2",
+        data: {
+          invalue: ""
+        }
+      });
+      // #endregion
+    </script>
+    <style></style>
+  </body>
+</html>

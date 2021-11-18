@@ -51,3 +51,9 @@
 [再利用と構成（描画関数と JSX ー JSX](https://jp.vuejs.org/v2/guide/render-function.html#JSX)
 〜
 [ツール（最後まで）（読んだだけ）](https://jp.vuejs.org/v2/guide/deployment.html)
+
+# 2021/11/18
+
+[スケールアップ（ルーティング）](https://jp.vuejs.org/v2/guide/routing.html)
+〜
+[内部（リアクティブの探求）](https://jp.vuejs.org/v2/guide/reactivity.html)

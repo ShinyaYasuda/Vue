@@ -28,6 +28,14 @@
       <br /><br />
       <date-link-component date="2021-11-17"></date-link-component>
       <br /><br />
+      <date-link-component date="2021-11-18"></date-link-component>
+      <br /><br />
+
+      <p>--- Route ---</p>
+      <div id="app"></div>
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+      <a href="/NotFound">NotFound</a>
     </div>
     <br />
     <script>
@@ -39,6 +47,31 @@
       var dateLinkVm = new Vue({
         el: "#date-link"
       });
+      // #region "ルーティング"
+      const NotFound = { template: "<p>page not found</p>" };
+      const Home = { template: "<p>home page</p>" };
+      const About = { template: "<p>about page</p>" };
+
+      const routes = {
+        "/": Home,
+        "/about": About
+      };
+
+      new Vue({
+        el: "#app",
+        data: {
+          currentRoute: window.location.pathname
+        },
+        computed: {
+          ViewComponent() {
+            return routes[this.currentRoute] || NotFound;
+          }
+        },
+        render(h) {
+          return h(this.ViewComponent);
+        }
+      });
+      // #endregion
     </script>
   </body>
 </html>
